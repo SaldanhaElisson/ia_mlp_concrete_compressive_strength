@@ -17,7 +17,7 @@ def main():
     print(f"Número de outliers removidos: {num_outliers}")
     print(f"Dados sem outliers:\n{data_cleaned}")
 
-    print(data_main.age)
+
 
 if __name__ == "__main__":
     main()
