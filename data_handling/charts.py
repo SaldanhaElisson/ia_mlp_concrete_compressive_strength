@@ -1,5 +1,3 @@
-from scipy.stats import kurtosis
-
 from analizy_datas import AnalizeyDatas
 import matplotlib.pyplot as plt
 import numpy as np
