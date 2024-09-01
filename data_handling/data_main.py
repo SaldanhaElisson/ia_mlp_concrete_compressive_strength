@@ -1,6 +1,4 @@
 import pandas as pd
-
-
 from data_handling.charts import Charts
 
 
