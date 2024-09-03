@@ -16,8 +16,8 @@ from models_ia.mlp.model import MLP
 
 class HandlerTrainer():
 
-    def __init__(self,  n_layers, n_hidden, lr, epochs):
-
+    def __init__(self,  n_layers, n_hidden, lr, epochs, num_repeat):
+        self.num_repeat = num_repeat
         self.lr = lr
         self.x_test = None
         self.y_test = None
@@ -71,9 +71,9 @@ class HandlerTrainer():
         self.x_test = torch.tensor(x_test, dtype=torch.float32)
         self.y_test = torch.tensor(y_test, dtype=torch.float32)
 
-    def train(self, num_repeats=5):
-        for repeat in range(num_repeats):
-            print(f"Treinamento {repeat + 1}/{num_repeats}")
+    def train(self):
+
+
             self.model.train()
             optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
 
@@ -116,7 +116,7 @@ class HandlerTrainer():
                     print(
                         f'Epoch [{epoch + 1}/{num_epochs}], Loss: {epoch_loss:.4f}, Test Loss: {test_loss:.4f}')
 
-            print(f"Resultados do Treinamento {repeat + 1}/{num_repeats}")
+            print(f"Resultados do Treinamento { self.num_repeat }/5")
             print("Training Losses:", losses)
             print("Validation Losses:", val_losses)
             print("Test Losses:", test_losses)
@@ -126,7 +126,7 @@ class HandlerTrainer():
             plt.plot(range(num_epochs), test_losses, label='Test Loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            plt.title(f'Learning Curve - Treinamento {repeat + 1}')
+            plt.title(f'Learning Curve - Treinamento - {self.num_repeat} - Nós e Camadas - {self.n_hidden} - {self.n_layers}')
             plt.legend()
             plt.show()
 

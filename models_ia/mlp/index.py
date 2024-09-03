@@ -8,21 +8,21 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import torch
 
-
 param_grid = {
     'n_layers': [2, 4, 8],
     'n_hidden': [16, 32, 64],
     'lr': [0.001, 0.0001],
-    'epochs': [100, 150]
+
 }
 
 results = []
-
+num_repeat = 5
+epochs = 150
 for n_layers in param_grid['n_layers']:
     for n_hidden in param_grid['n_hidden']:
         for lr in param_grid['lr']:
-            for epochs in param_grid['epochs']:
-                handle_trainer = HandlerTrainer(n_layers, n_hidden, lr, epochs)
+            for repeat in range(num_repeat):
+                handle_trainer = HandlerTrainer(n_layers, n_hidden, lr, epochs, repeat)
                 handle_trainer.set_datas()
                 handle_trainer.train()
                 evaluation = handle_trainer.evaluate_model()
@@ -33,7 +33,6 @@ for n_layers in param_grid['n_layers']:
 # Exibir todos os resultados
 for result in results:
     print(result)
-
 
 
 
