@@ -1,6 +1,6 @@
 import sys
 
-from models_ia.mlp.handle_trainer import HandlerTrainer
+from models_ia.mlp.handle_trainer import HandlerTrainer, plot_scatter
 
 sys.path.append('/home/marvin/PycharmProjects/IA_CCS/data_handling')
 
@@ -35,7 +35,7 @@ handler_trainer = HandlerTrainer(n_layers=4, n_hidden=32, lr=0.001, epochs=150, 
 handler_trainer.set_datas()
 handler_trainer.train()
 evaluation = handler_trainer.evaluate_model()
-handler_trainer.plot_scatter(evaluation['predictions'], handler_trainer.y_test)
+plot_scatter(evaluation['predictions'], handler_trainer.y_test)
 # Avaliar o modelo no conjunto de teste
 # model.eval()
 # test_loss = 0.0
