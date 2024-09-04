@@ -34,8 +34,8 @@ param_grid = {
 handler_trainer = HandlerTrainer(n_layers=4, n_hidden=32, lr=0.001, epochs=150, num_repeat=5)
 handler_trainer.set_datas()
 handler_trainer.train()
-evaluation = handler_trainer.evaluate_model()
-plot_scatter(evaluation['predictions'], handler_trainer.y_test)
+evaluation = handler_trainer.evaluate_model_val()
+plot_scatter(evaluation['predictions'], handler_trainer.y_val)
 # Avaliar o modelo no conjunto de teste
 # model.eval()
 # test_loss = 0.0
