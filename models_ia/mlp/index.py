@@ -30,7 +30,6 @@ param_grid = {
 # for result in results:
 #     print(result)
 
-
 handler_trainer = HandlerTrainer(n_layers=4, n_hidden=32, lr=0.001, epochs=150, num_repeat=5)
 handler_trainer.set_datas()
 handler_trainer.train()
