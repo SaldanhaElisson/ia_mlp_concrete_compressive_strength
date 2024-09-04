@@ -7,15 +7,15 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from torch import optim
-import torch.nn.functional as F
+import torch.nn.functional as f
 
 from data_handling.cleassing_datas import CleasingDatas
 from data_handling.data_main import DataMain
-from models_ia.linear.model import ModeloLinear  # Importa o novo modelo linear
+from models_ia.linear.model import ModeloLinear
 
-class HandlerTrainer():
+class HandlerTrainer:
 
-    def __init__(self, lr, epochs):
+    def __init__(self, n_layers, n_hidden, lr, epochs, num_repeat):
 
         self.lr = lr
         self.x_test = None
@@ -27,6 +27,9 @@ class HandlerTrainer():
         self.n_inputs = 8
         self.n_outputs = 1
         self.epochs = epochs
+        self.n_layers = n_layers
+        self.n_hidden = n_hidden
+        self.num_repeat = num_repeat
         self.model = ModeloLinear(self.n_inputs, self.n_outputs)  # Inicializa o modelo linear
 
 
@@ -66,9 +69,7 @@ class HandlerTrainer():
         self.x_test = torch.tensor(x_test, dtype=torch.float32)
         self.y_test = torch.tensor(y_test, dtype=torch.float32)
 
-    def train(self, num_repeats=5):
-        for repeat in range(num_repeats):
-            print(f"Treinamento {repeat + 1}/{num_repeats}")
+    def train(self):
             self.model.train()
             optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
 
@@ -84,7 +85,7 @@ class HandlerTrainer():
                     optimizer.zero_grad()
 
                     y_hat = self.model(self.x_train[n])
-                    loss = F.mse_loss(y_hat, self.y_train[n])  # Função de perda
+                    loss = f.mse_loss(y_hat, self.y_train[n])  # Função de perda
                     loss.backward()
 
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
@@ -101,7 +102,7 @@ class HandlerTrainer():
                 with torch.no_grad():
                     for n in range(self.x_test.size()[0]):
                         y_hat = self.model(self.x_test[n])
-                        test_loss += F.mse_loss(y_hat, self.y_test[n]).item()
+                        test_loss += f.mse_loss(y_hat, self.y_test[n]).item()
                 test_loss /= self.x_test.size()[0]
                 test_losses.append(test_loss)
 
@@ -111,7 +112,7 @@ class HandlerTrainer():
                     print(
                         f'Epoch [{epoch + 1}/{num_epochs}], Loss: {epoch_loss:.4f}, Test Loss: {test_loss:.4f}')
 
-            print(f"Resultados do Treinamento {repeat + 1}/{num_repeats}")
+            print(f"Resultados do treinamento {self.num_repeat}/5")
             print("Training Losses:", losses)
             print("Validation Losses:", val_losses)
             print("Test Losses:", test_losses)
@@ -121,7 +122,7 @@ class HandlerTrainer():
             plt.plot(range(num_epochs), test_losses, label='Test Loss')
             plt.xlabel('Epoch')
             plt.ylabel('Loss')
-            plt.title(f'Learning Curve - Treinamento {repeat + 1}')
+            plt.title(f"Learning Curve - Treinamento - {self.num_repeat} - Nós e Camadas - {self.n_hidden} - {self.n_layers}")
             plt.legend()
             plt.show()
 
@@ -132,8 +133,8 @@ class HandlerTrainer():
         with torch.no_grad():
             for n in range(self.x_test.size()[0]):
                 y_hat = self.model(self.x_test[n])
-                test_loss_mse += F.mse_loss(y_hat, self.y_test[n], reduction='sum').item()
-                test_loss_mae += F.l1_loss(y_hat, self.y_test[n], reduction='sum').item()
+                test_loss_mse += f.mse_loss(y_hat, self.y_test[n], reduction='sum').item()
+                test_loss_mae += f.l1_loss(y_hat, self.y_test[n], reduction='sum').item()
 
         test_loss_mse /= self.x_test.size()[0]
         test_loss_mae /= self.x_test.size()[0]
@@ -141,6 +142,8 @@ class HandlerTrainer():
         return {
             'mse': test_loss_mse,
             'mae': test_loss_mae,
+            'n_layers': self.n_layers,
+            'n_hidden': self.n_hidden,
             'lr': self.lr,
             'epochs': self.epochs
         }
