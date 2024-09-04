@@ -1,4 +1,4 @@
-from analizy_datas import AnalizeyDatas
+from data_handling.analizy_datas import AnalizeyDatas
 import matplotlib.pyplot as plt
 import numpy as np
 
