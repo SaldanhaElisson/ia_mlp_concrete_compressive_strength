@@ -14,6 +14,15 @@ from data_handling.cleassing_datas import CleasingDatas
 from data_handling.data_main import DataMain
 from models_ia.mlp.model import MLP
 
+
+def plot_scatter(predictions, y_test):
+    plt.scatter(y_test, predictions, label='Predições')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', label='Ideal')
+    plt.xlabel('Saída Desejada')
+    plt.ylabel('Predição')
+    plt.legend()
+    plt.show()
+
 class HandlerTrainer():
 
     def __init__(self,  n_layers, n_hidden, lr, epochs, num_repeat):
@@ -145,11 +154,20 @@ class HandlerTrainer():
         test_loss_mae /= self.x_test.size()[0]
         return {'mse': test_loss_mse, 'mae': test_loss_mae, 'predictions': predictions}
 
-    def plot_scatter(self, predictions, y_test):
-        plt.scatter(y_test, predictions, label='Predições')
-        plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', label='Ideal')
-        plt.xlabel('Saída Desejada')
-        plt.ylabel('Predição')
-        plt.legend()
-        plt.show()
+    def evaluate_model_val(self):
+        self.model.eval()
+        val_loss_mse = 0.0
+        val_loss_mae = 0.0
+        predictions = []
+        with torch.no_grad():
+            for n in range(self.x_val.size()[0]):
+                y_hat = self.model(self.x_val[n])
+                y_hat = y_hat.squeeze()
+                predictions.append(y_hat.item())
+                val_loss_mse += F.mse_loss(y_hat, self.y_test[n], reduction='sum').item()
+                val_loss_mae += F.l1_loss(y_hat, self.y_test[n], reduction='sum').item()
+
+        val_loss_mse /= self.x_test.size()[0]
+        val_loss_mae /= self.x_test.size()[0]
+        return {'mse': val_loss_mse, 'mae': val_loss_mae, 'predictions': predictions}
 
