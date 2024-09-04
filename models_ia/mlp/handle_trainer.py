@@ -73,7 +73,6 @@ class HandlerTrainer():
 
     def train(self):
 
-
             self.model.train()
             optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
 
@@ -134,20 +133,23 @@ class HandlerTrainer():
         self.model.eval()
         test_loss_mse = 0.0
         test_loss_mae = 0.0
+        predictions = []
         with torch.no_grad():
             for n in range(self.x_test.size()[0]):
                 y_hat = self.model(self.x_test[n])
+                predictions.append(y_hat.item())
                 test_loss_mse += F.mse_loss(y_hat, self.y_test[n], reduction='sum').item()
                 test_loss_mae += F.l1_loss(y_hat, self.y_test[n], reduction='sum').item()
 
         test_loss_mse /= self.x_test.size()[0]
         test_loss_mae /= self.x_test.size()[0]
+        return {'mse': test_loss_mse, 'mae': test_loss_mae, 'predictions': predictions}
 
-        return {
-            'mse': test_loss_mse,
-            'mae': test_loss_mae,
-            'n_layers': self.n_layers,
-            'n_hidden': self.n_hidden,
-            'lr': self.lr,
-            'epochs': self.epochs
-        }
+    def plot_scatter(self, predictions, y_test):
+        plt.scatter(y_test, predictions, label='Predições')
+        plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', label='Ideal')
+        plt.xlabel('Saída Desejada')
+        plt.ylabel('Predição')
+        plt.legend()
+        plt.show()
+
